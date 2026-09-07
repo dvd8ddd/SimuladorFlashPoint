@@ -1,0 +1,1 @@
+# Aqui se va a generar los códigos del bombero (clase Agent) con self.state
