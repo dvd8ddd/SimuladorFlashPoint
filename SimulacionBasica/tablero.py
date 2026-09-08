@@ -72,31 +72,31 @@ def leer_tab(ruta):
         col=int(linea[1])-1
         salidas.append((fila, col))
         indice +=1
-    return paredes, fuego,poi,salidas
+    return paredes, fuego, poi,salidas
 
-paredes, fuego, poi, salidas=leer_tab("tablero/tablero_final.txt") #resultado devuelto
-#verificacion
-contador_fuego=0
-for fila in range(6):
-    for col in range(8):
-        if fuego[fila][col] == 2:
-            contador_fuego += 1
-            
-contador_poi=0
-for fila in range(6):
-    for col in range(8):
-        if poi[fila][col] !=0:
-            contador_poi+=1
+if __name__ == "__main__":
+    paredes, fuego, poi, salidas=leer_tab("../tableros/tablero_final.txt")
+    contador_fuego=0
+    for fila in range(6):
+        for col in range(8):
+            if fuego[fila][col] == 2:
+                contador_fuego += 1
 
-contador_puertas=0
-for fila in range(6):
-    for col in range(8):
-        for lado in range(4):
-            if paredes[fila][col][lado]==4:
-                contador_puertas+=1
+    contador_poi=0
+    for fila in range(6):
+        for col in range(8):
+            if poi[fila][col] !=0:
+                contador_poi+=1
 
-print("casillas con fuego:", contador_fuego, "(debe ser 10)")
-print("casillas con marcador:", contador_poi, "(debe ser 3)")
-print("bordes con puertas:", contador_puertas, "(debe ser 16)")
-print("casilla (0,0):", paredes[0][0], "(debe ser [1,1,0,0])")
-print("salidas:", salidas, "(debe ser [(0,2), (0,7), (4,0), (5,2)])")
+    contador_puertas=0
+    for fila in range(6):
+        for col in range(8):
+            for lado in range(4):
+                if paredes[fila][col][lado]==4:
+                    contador_puertas+=1
+
+    print("casillas con fuego:", contador_fuego, "(debe ser 10)")
+    print("casillas con marcador:", contador_poi, "(debe ser 3)")
+    print("bordes con puertas:", contador_puertas, "(debe ser 16)")
+    print("casilla (0,0):", paredes[0][0], "(debe ser [1,1,0,0])")
+    print("salidas:", salidas, "(debe ser [(0,2), (0,7), (4,0), (5,2)])")
