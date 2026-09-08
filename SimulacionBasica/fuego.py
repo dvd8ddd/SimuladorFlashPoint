@@ -1,6 +1,6 @@
 import numpy as np
 
-def avanzarFuego(model):
+def avanzar_fuego(model):
     fila=np.random.randint(6) #eesta y abajo escogen la casilla, elige una fila de 0 a 5 y columna de 0 a 7
     col=np.random.randint(8)
     if model.fuego[fila][col]==0: #aqui se pone el humo
@@ -84,7 +84,7 @@ def flashover(model):
                                 if model.fuego[filaVecina][colVecina]==2:
                                     model.fuego[fila][col]=2
                                     cambio=True
-def efectosSecundarios(model):
+def efectos_secundarios(model):
     for bombero in model.agents: #revisa bombero
         col,fila=bombero.pos
         if model.fuego[fila][col]==2:
