@@ -1,5 +1,6 @@
 # Aqui se va a generar los códigos del bombero (clase Agent) con self.state
 
+# Aqui posiblemente podemos tener los roles del bombero si quieren ponerlos?
 
 class Bombero (Agent):
     def __init__ (self, model):

@@ -1,0 +1,1 @@
+# Carga del .txt de los muros, fuego y POIs
