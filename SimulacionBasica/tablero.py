@@ -70,7 +70,7 @@ def leer_tab(ruta):
         linea=lineas[indice].split()
         fila=int(linea[0])-1
         col=int(linea[1])-1
-        salidas.append((fila, col1))
+        salidas.append((fila, col))
         indice +=1
     return paredes, fuego,poi,salidas
 
@@ -81,18 +81,18 @@ for fila in range(6):
     for col in range(8):
         if fuego[fila][col] == 2:
             contador_fuego += 1
+            
 contador_poi=0
-
 for fila in range(6):
     for col in range(8):
         if poi[fila][col] !=0:
             contador_poi+=1
-contador_puertas=0
 
+contador_puertas=0
 for fila in range(6):
     for col in range(8):
         for lado in range(4):
-            if paredes[fila][col][lado]==0:
+            if paredes[fila][col][lado]==4:
                 contador_puertas+=1
 
 print("casillas con fuego:", contador_fuego, "(debe ser 10)")
