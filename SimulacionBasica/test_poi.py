@@ -1,11 +1,18 @@
 import types
+import numpy as np
 from tablero import leer_tab
 from poi import crear_bolsa, contar_poi, sacar_de_la_bolsa, reponer_poi
 
+# ============================================================
+# NOTA: cambia esta ruta si tu tablero_final.txt real ya esta
+# en tableros/ en vez de tableros_test/
+# ============================================================
 paredes, fuego, poi, salidas = leer_tab("../tableros/tablero_final.txt")
 
 # modelo falso: le agregamos .bomberos como lista vacia por ahora,
-# porque agente.py todavia no existe
+# porque agente.py todavia no existe. En cuanto Sergio o David
+# tengan bomberos de verdad, cambiar esta lista por bomberos reales
+# para probar tambien el caso "hay_bombero" de reponer_poi.
 model = types.SimpleNamespace(paredes=paredes, fuego=fuego, poi=poi, bomberos=[])
 
 crear_bolsa(model)
@@ -58,6 +65,3 @@ for fila in range(6):
 total_victimas = victimas_retiradas + victimas_en_tablero
 print()
 print("Total de victimas (retiradas + en tablero):", total_victimas, "(nunca debe pasar de 10)")
-
-print()
-print("Prueba terminada sin romper los limites de arriba." )

@@ -1,9 +1,34 @@
+import numpy as np
+
+# ============================================================
+# NOTAS PARA HABLAR CON EL EQUIPO (borrar cuando ya se resuelvan)
+#
+# 1. model.bomberos -> en reponer_poi() se asume que existe una
+#    lista model.bomberos, donde cada bombero tiene .fila y .col
+#    (mismo patron que paredes.py). Esto todavia no existe en
+#    ningun otro archivo porque agente.py de David no esta listo.
+#    HABLAR CON SERGIO: confirmar que su modelo.py va a exponer
+#    model.bomberos con esa forma exacta, o avisar si va a ser
+#    distinto (ej. una lista de tuplas, un dict, etc.) para
+#    ajustar el for de abajo.
+#
+# 2. model.bolsa -> esta funcion crea el atributo model.bolsa la
+#    primera vez que se llama crear_bolsa(model). Falta acordar
+#    CUANDO se llama exactamente (una sola vez al preparar la
+#    partida, dentro de __init__ de FlashPointModel, antes del
+#    primer step()). Si nadie la llama antes de reponer_poi(),
+#    va a tronar con AttributeError: 'model' no tiene .bolsa.
+#
+# 3. model.fuego y model.poi -> se asume que ya vienen como
+#    matrices 6x8 de numpy, resultado de tablero.leer_tab(). Si
+#    en algun momento el tipo de dato cambia (por ejemplo si se
+#    convierten a listas normales de Python en vez de np.array),
+#    esta funcion deberia seguir funcionando igual porque solo
+#    usa indexado [fila][col], pero vale la pena confirmarlo.
+# ============================================================
 
 
 def crear_bolsa(model):
-    # 10 victimas y 5 falsas alarmas en total, menos las 3 que ya
-    # vienen puestas en el tablero menos las que ya estan puestas por def:
-    # 8 victimas y 4 falsas alarmas
     victimas_en_tablero = 0
     falsas_en_tablero = 0
     for fila in range(6):
@@ -22,9 +47,8 @@ def crear_bolsa(model):
         bolsa.append("f")
     model.bolsa = bolsa
 
-def contar_poi(model):
-    # cuenta cuantas casillas valen 1, 2 o 3 (boca abajo + reveladas)
 
+def contar_poi(model):
     total = 0
     for fila in range(6):
         for col in range(8):
@@ -33,10 +57,10 @@ def contar_poi(model):
                 total += 1
     return total
 
-def sacar_de_la_bolsa(model):
-    # saca uno al azar de lo que quede, lo quita de la bolsa,
-    # regresa 1 (victima) o 2 (falsa alarma)
 
+def sacar_de_la_bolsa(model):
+    # np.random, no random -> asi lo pide el brief, igual que
+    # el resto de los archivos del profe
     indice = int(np.random.randint(len(model.bolsa)))
     tipo = model.bolsa[indice]
     del model.bolsa[indice]
@@ -45,36 +69,35 @@ def sacar_de_la_bolsa(model):
     else:
         return 2
 
-def reponer_poi(model):
-    # mientras haya menos de 3 en el tablero y quede algo en la bolsa:
-    #   escoge casilla al azar, si tiene fuego/humo lo quita antes,
-    #   si tiene bombero se revela de inmediato (1->3, 2 se quita),
-    #   si ya tiene marcador, escoge otra casilla
 
+def reponer_poi(model):
     while contar_poi(model) < 3:
         if len(model.bolsa) == 0:
             break
- 
+
         fila = int(np.random.randint(6))
         col = int(np.random.randint(8))
- 
+
         if model.poi[fila][col] != 0:
             continue
- 
+
         if model.fuego[fila][col] != 0:
             model.fuego[fila][col] = 0
- 
+
+        # HABLAR CON EL EQUIPO: ver nota 1 arriba, model.bomberos
+        # todavia no esta confirmado por Sergio/David
         hay_bombero = False
         for bombero in model.bomberos:
             if bombero.fila == fila and bombero.col == col:
                 hay_bombero = True
                 break
- 
+
         valor = sacar_de_la_bolsa(model)
- 
+
         if hay_bombero:
             if valor == 1:
                 model.poi[fila][col] = 3
-            # si valor es 2 (falsa alarma) no se coloca nada, ya se descarto
+            # si valor es 2 (falsa alarma) no se coloca nada,
+            # se descarta de inmediato sin pasar por el tablero
         else:
             model.poi[fila][col] = valor
