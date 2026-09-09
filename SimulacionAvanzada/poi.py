@@ -84,11 +84,14 @@ def reponer_poi(model):
         if model.fuego[fila][col] != 0:
             model.fuego[fila][col] = 0
 
-        # HABLAR CON EL EQUIPO: ver nota 1 arriba, model.bomberos
-        # todavia no esta confirmado por Sergio/David
+        # RESPUESTA A LA NOTA 1: no hay model.bomberos. Los agentes viven en
+        # model.agents (asi los guarda Mesa 3) y su posicion es agent.pos, que
+        # viene como (columna, fila) porque el grid de Mesa va al reves que
+        # nuestras capas
         hay_bombero = False
-        for bombero in model.bomberos:
-            if bombero.fila == fila and bombero.col == col:
+        for bombero in model.agents:
+            (col_bombero, fila_bombero) = bombero.pos
+            if fila_bombero == fila and col_bombero == col:
                 hay_bombero = True
                 break
 
