@@ -87,13 +87,13 @@ def flashover(model):
 def efectos_secundarios(model):
     for bombero in model.agents: #revisa bombero
         col,fila=bombero.pos
-        if model.fuego[fila][col]==2: #solo al bombero que quedo sobre el fuego
+        if model.fuego[fila][col]==2:
             filaSalida, colSalida=model.salidas[0] #guarda primera salida
             pocaDistancia=abs(fila-filaSalida)+abs(col-colSalida) 
             for salida in model.salidas: #compara las diferentes salidas
                 filaOpcional, colOpcional=salida
                 distancia=abs(fila-filaOpcional)+abs(col-colOpcional) 
-                
+            
                 if distancia<pocaDistancia:
                     pocaDistancia=distancia
                     filaSalida=filaOpcional
