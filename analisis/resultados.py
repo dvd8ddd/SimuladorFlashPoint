@@ -8,9 +8,7 @@ import os
 carpeta = os.path.dirname(os.path.abspath(__file__))
 df = pd.read_csv(os.path.join(carpeta, "resultados.csv"))
 
-# ---------------------------------------------------------------------------
-# La tabla que pide el reto: aleatoria contra mejorada
-# ---------------------------------------------------------------------------
+# la tabla que pide el reto, aleatoria contra mejorada
 tabla = df.groupby(["estrategia", "avances", "rescatistas"]).agg(
     rescatados=("Rescatados", "mean"),
     perdidas=("Perdidas", "mean"),
@@ -23,9 +21,7 @@ tabla["porcentaje"] = (tabla["ganadas"] / tabla["corridas"]) * 100
 print(tabla.round(2))
 tabla.to_csv(os.path.join(carpeta, "tabla_resumen.csv"))
 
-# ---------------------------------------------------------------------------
-# Grafica 1: victimas rescatadas por estrategia
-# ---------------------------------------------------------------------------
+# grafica 1, victimas rescatadas por estrategia
 sns.set_theme(style="whitegrid")
 fig, axis = plt.subplots(figsize=(7, 5))
 sns.barplot(data=df, x="avances", y="Rescatados", hue="estrategia", ax=axis)
@@ -35,9 +31,7 @@ axis.set_ylabel("victimas rescatadas")
 plt.savefig(os.path.join(carpeta, "grafica_rescatados.png"), dpi=120)
 plt.close()
 
-# ---------------------------------------------------------------------------
-# Grafica 2: partidas ganadas con la mejorada segun el reparto de roles
-# ---------------------------------------------------------------------------
+# grafica 2, partidas ganadas segun el reparto de roles
 mejorada = df[df["estrategia"] == "mejorada"]
 ganadas = mejorada.groupby(["avances", "rescatistas"])["gano"].sum().reset_index()
 

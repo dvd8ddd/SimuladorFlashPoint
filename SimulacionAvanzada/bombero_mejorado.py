@@ -27,9 +27,7 @@ class BomberoMejorado(Bombero):
         if self.guardados > 4:
             self.guardados = 4
 
-    # ------------------------------------------------------------------
-    # lo que puede hacer sin moverse
-    # ------------------------------------------------------------------
+    # lo que puede hacer sin moverse de su casilla
     def actuar_aqui(self):
         (col, fila) = self.pos
 
@@ -87,9 +85,7 @@ class BomberoMejorado(Bombero):
                     return False
         return True
 
-    # ------------------------------------------------------------------
     # a donde va y como se mueve
-    # ------------------------------------------------------------------
     def avanzar(self):
         (col, fila) = self.pos
         destino = self.buscar_destino()
