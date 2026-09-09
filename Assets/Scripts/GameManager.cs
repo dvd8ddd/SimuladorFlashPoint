@@ -22,9 +22,21 @@ public class GameManager : MonoBehaviour
 
     public float tamanoCelda = 1f;
 
+    // que tan lejos del centro de la celda se coloca cada tipo,
+    // ajustalos en el Inspector hasta que se vean pegados al borde
+    public float offsetPared = 0.5f;
+    public float offsetPuerta = 0.5f;
+
+    // rotacion en grados (eje Y) para cada direccion, AJUSTABLE en
+    // el Inspector. Empieza en 0/90/180/270 y modificalos de 90 en
+    // 90 hasta que la puerta quede mirando hacia el lado correcto
+    public float rotacionArriba = 0f;
+    public float rotacionIzquierda = 90f;
+    public float rotacionAbajo = 180f;
+    public float rotacionDerecha = 270f;
+
     void Start()
     {
-        // Busca en Assets/StreamingAssets el .json, lo lee, convierte a string y se usa para crear los gameobjects.
         string ruta = Application.streamingAssetsPath + "/estado_ejemplo.json";
         string texto = File.ReadAllText(ruta);
         EstadoData estado = JsonUtility.FromJson<EstadoData>(texto);
@@ -126,29 +138,42 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        Vector3 posicion = GridToWorld(fila, col);
-        Quaternion rotacion = Quaternion.identity;
+        // el offset depende de si es pared o puerta, porque pueden
+        // tener geometria de distinto tamano/profundidad
+        float offset = offsetPared;
+        if (valor == 4 || valor == 5)
+        {
+            offset = offsetPuerta;
+        }
 
-        // ajusta la posicion/rotacion segun el lado, esto depende
-        // de como esten armados tus prefabs de pared
+        Vector3 posicion = GridToWorld(fila, col);
+        float anguloRotacion = 0f;
+
+        // cada direccion tiene SU PROPIO offset y SU PROPIA rotacion,
+        // no se agrupan en pares, porque el prefab puede tener un
+        // frente distinguible (sobre todo la puerta)
         if (direccion == 0)
         {
-            posicion += new Vector3(0f, 0f, tamanoCelda * 0.5f);
+            posicion += new Vector3(0f, 0f, offset);
+            anguloRotacion = rotacionArriba;
         }
         else if (direccion == 1)
         {
-            posicion += new Vector3(-tamanoCelda * 0.5f, 0f, 0f);
-            rotacion = Quaternion.Euler(0f, 90f, 0f);
+            posicion += new Vector3(-offset, 0f, 0f);
+            anguloRotacion = rotacionIzquierda;
         }
         else if (direccion == 2)
         {
-            posicion += new Vector3(0f, 0f, -tamanoCelda * 0.5f);
+            posicion += new Vector3(0f, 0f, -offset);
+            anguloRotacion = rotacionAbajo;
         }
         else if (direccion == 3)
         {
-            posicion += new Vector3(tamanoCelda * 0.5f, 0f, 0f);
-            rotacion = Quaternion.Euler(0f, 90f, 0f);
+            posicion += new Vector3(offset, 0f, 0f);
+            anguloRotacion = rotacionDerecha;
         }
+
+        Quaternion rotacion = Quaternion.Euler(0f, anguloRotacion, 0f);
 
         if (valor == 1)
         {
@@ -174,7 +199,7 @@ public class GameManager : MonoBehaviour
         textoInfectada.text = estado.perdidas + " / 4";
         textoDanio.text = estado.danio + " / 24";
 
-        // "Fuego" no viene como numero directo en el
+        // "Formas Primitivas Activas" no viene como numero directo en el
         // JSON, hay que contar cuantas casillas del arreglo fuego valen 2
         int contadorFuego = 0;
         for (int i = 0; i < estado.fuego.Length; i++)
