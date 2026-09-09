@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5817067375574975101}
   - component: {fileID: 2229583886392016065}
+  - component: {fileID: -7276208891181530136}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -64,9 +65,19 @@ MonoBehaviour:
   textoDanio: {fileID: 0}
   textoFormasPrimitivas: {fileID: 0}
   tamanoCelda: 1
+  segundosEntrePasos: 1.5
   offsetPared: 0.5
   offsetPuerta: 0.5
-  rotacionArriba: 0
-  rotacionIzquierda: 90
-  rotacionAbajo: 180
-  rotacionDerecha: 270
+--- !u!114 &-7276208891181530136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8677208162893109227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 908a1a98afeb6cf4596c2b411f47361b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WebClient
+  urlServidor: http://localhost:8585

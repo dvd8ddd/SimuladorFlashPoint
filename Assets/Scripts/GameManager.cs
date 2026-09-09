@@ -1,4 +1,5 @@
-using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -22,26 +23,63 @@ public class GameManager : MonoBehaviour
 
     public float tamanoCelda = 1f;
 
+    // cada cuantos segundos se pide el siguiente paso al servidor,
+    // ajustalo en el Inspector para que se vea a un ritmo comodo
+    public float segundosEntrePasos = 1.5f;
+
+    // guarda todo lo que se instancia en un paso, para poder borrarlo
+    // antes de dibujar el siguiente
+    private List<GameObject> objetosInstanciados = new List<GameObject>();
+
+    private WebClient cliente;
+    private bool partidaTerminada = false;
+
     // que tan lejos del centro de la celda se coloca cada tipo,
-    // ajustalos en el Inspector hasta que se vean pegados al borde
+    // ajustalos en el Inspector si la puerta y la pared tienen
+    // distinta profundidad/grosor
     public float offsetPared = 0.5f;
     public float offsetPuerta = 0.5f;
 
-    // rotacion en grados (eje Y) para cada direccion, AJUSTABLE en
-    // el Inspector. Empieza en 0/90/180/270 y modificalos de 90 en
-    // 90 hasta que la puerta quede mirando hacia el lado correcto
-    public float rotacionArriba = 0f;
-    public float rotacionIzquierda = 90f;
-    public float rotacionAbajo = 180f;
-    public float rotacionDerecha = 270f;
-
     void Start()
     {
-        string ruta = Application.streamingAssetsPath + "/estado_ejemplo.json";
-        string texto = File.ReadAllText(ruta);
-        EstadoData estado = JsonUtility.FromJson<EstadoData>(texto);
+        cliente = GetComponent<WebClient>();
+        StartCoroutine(cliente.PedirNuevaPartida(ProcesarEstadoNuevo));
+    }
+
+    void ProcesarEstadoNuevo(string textoJson)
+    {
+        EstadoData estado = JsonUtility.FromJson<EstadoData>(textoJson);
+        LimpiarTablero();
         DibujarTablero(estado);
         ActualizarHUD(estado);
+
+        if (estado.estado == "en_curso")
+        {
+            Invoke("PedirSiguientePaso", segundosEntrePasos);
+        }
+        else
+        {
+            partidaTerminada = true;
+            Debug.Log("Partida terminada: " + estado.estado);
+        }
+    }
+
+    void PedirSiguientePaso()
+    {
+        if (partidaTerminada)
+        {
+            return;
+        }
+        StartCoroutine(cliente.PedirSiguientePaso(ProcesarEstadoNuevo));
+    }
+
+    void LimpiarTablero()
+    {
+        for (int i = 0; i < objetosInstanciados.Count; i++)
+        {
+            Destroy(objetosInstanciados[i]);
+        }
+        objetosInstanciados.Clear();
     }
 
     Vector3 GridToWorld(int fila, int col)
@@ -88,11 +126,13 @@ public class GameManager : MonoBehaviour
                 int valorFuego = estado.fuego[indice];
                 if (valorFuego == 1)
                 {
-                    Instantiate(prefabHumo, GridToWorld(fila, col), Quaternion.identity);
+                    GameObject obj = Instantiate(prefabHumo, GridToWorld(fila, col), Quaternion.identity);
+                    objetosInstanciados.Add(obj);
                 }
                 else if (valorFuego == 2)
                 {
-                    Instantiate(prefabFuego, GridToWorld(fila, col), Quaternion.identity);
+                    GameObject obj = Instantiate(prefabFuego, GridToWorld(fila, col), Quaternion.identity);
+                    objetosInstanciados.Add(obj);
                 }
             }
         }
@@ -111,11 +151,13 @@ public class GameManager : MonoBehaviour
                 int valorPoi = estado.poi[indice];
                 if (valorPoi == 1 || valorPoi == 2)
                 {
-                    Instantiate(prefabPoiTapado, GridToWorld(fila, col), Quaternion.identity);
+                    GameObject obj = Instantiate(prefabPoiTapado, GridToWorld(fila, col), Quaternion.identity);
+                    objetosInstanciados.Add(obj);
                 }
                 else if (valorPoi == 3)
                 {
-                    Instantiate(prefabVictima, GridToWorld(fila, col), Quaternion.identity);
+                    GameObject obj = Instantiate(prefabVictima, GridToWorld(fila, col), Quaternion.identity);
+                    objetosInstanciados.Add(obj);
                 }
             }
         }
@@ -126,7 +168,8 @@ public class GameManager : MonoBehaviour
             BomberoData bombero = estado.bomberos[i];
             Vector3 posicion = GridToWorld(bombero.fila, bombero.col);
             GameObject prefabDeEsteBombero = prefabsBomberos[bombero.id];
-            Instantiate(prefabDeEsteBombero, posicion, Quaternion.identity);
+            GameObject obj = Instantiate(prefabDeEsteBombero, posicion, Quaternion.identity);
+            objetosInstanciados.Add(obj);
         }
     }
 
@@ -138,8 +181,9 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // el offset depende de si es pared o puerta, porque pueden
-        // tener geometria de distinto tamano/profundidad
+        // mismo offset base que las paredes, pero si valor es puerta
+        // (4 o 5) usa el offset propio de puerta -> mismo patron
+        // binario de rotacion que ya funcionaba para las paredes
         float offset = offsetPared;
         if (valor == 4 || valor == 5)
         {
@@ -147,49 +191,48 @@ public class GameManager : MonoBehaviour
         }
 
         Vector3 posicion = GridToWorld(fila, col);
-        float anguloRotacion = 0f;
+        Quaternion rotacion = Quaternion.identity;
 
-        // cada direccion tiene SU PROPIO offset y SU PROPIA rotacion,
-        // no se agrupan en pares, porque el prefab puede tener un
-        // frente distinguible (sobre todo la puerta)
         if (direccion == 0)
         {
             posicion += new Vector3(0f, 0f, offset);
-            anguloRotacion = rotacionArriba;
         }
         else if (direccion == 1)
         {
             posicion += new Vector3(-offset, 0f, 0f);
-            anguloRotacion = rotacionIzquierda;
+            rotacion = Quaternion.Euler(0f, 90f, 0f);
         }
         else if (direccion == 2)
         {
             posicion += new Vector3(0f, 0f, -offset);
-            anguloRotacion = rotacionAbajo;
         }
         else if (direccion == 3)
         {
             posicion += new Vector3(offset, 0f, 0f);
-            anguloRotacion = rotacionDerecha;
+            rotacion = Quaternion.Euler(0f, 90f, 0f);
         }
 
-        Quaternion rotacion = Quaternion.Euler(0f, anguloRotacion, 0f);
-
+        GameObject objInstanciado = null;
         if (valor == 1)
         {
-            Instantiate(prefabParedIntacta, posicion, rotacion);
+            objInstanciado = Instantiate(prefabParedIntacta, posicion, rotacion);
         }
         else if (valor == 2)
         {
-            Instantiate(prefabParedDanada, posicion, rotacion);
+            objInstanciado = Instantiate(prefabParedDanada, posicion, rotacion);
         }
         else if (valor == 4)
         {
-            Instantiate(prefabPuertaCerrada, posicion, rotacion);
+            objInstanciado = Instantiate(prefabPuertaCerrada, posicion, rotacion);
         }
         else if (valor == 5)
         {
-            Instantiate(prefabPuertaAbierta, posicion, rotacion);
+            objInstanciado = Instantiate(prefabPuertaAbierta, posicion, rotacion);
+        }
+
+        if (objInstanciado != null)
+        {
+            objetosInstanciados.Add(objInstanciado);
         }
     }
 
