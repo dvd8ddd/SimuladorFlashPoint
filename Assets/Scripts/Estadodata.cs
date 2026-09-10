@@ -7,6 +7,7 @@ public class BomberoData
     public int fila;
     public int col;
     public bool cargando;
+    public int ap; 
 }
 
 [System.Serializable]

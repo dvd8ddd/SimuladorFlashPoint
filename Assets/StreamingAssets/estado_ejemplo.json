@@ -6,37 +6,43 @@
       "id": 0,
       "fila": 0,
       "col": 2,
-      "cargando": false
+      "cargando": false,
+      "ap": 4
     },
     {
       "id": 1,
       "fila": 0,
       "col": 7,
-      "cargando": false
+      "cargando": false,
+      "ap": 4
     },
     {
       "id": 2,
       "fila": 4,
       "col": 0,
-      "cargando": false
+      "cargando": false,
+      "ap": 4
     },
     {
       "id": 3,
       "fila": 5,
       "col": 2,
-      "cargando": false
+      "cargando": false,
+      "ap": 4
     },
     {
       "id": 4,
       "fila": 0,
       "col": 2,
-      "cargando": false
+      "cargando": false,
+      "ap": 4
     },
     {
       "id": 5,
       "fila": 0,
       "col": 7,
-      "cargando": false
+      "cargando": false,
+      "ap": 4
     }
   ],
   "fuego": [

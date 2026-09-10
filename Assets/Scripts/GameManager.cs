@@ -16,6 +16,11 @@ public class GameManager : MonoBehaviour
 
     public GameObject[] prefabsBomberos; // tamano 6, uno por id (0 a 5)
 
+    // arrastra aqui los 6 objetos Spartan_X, EN EL MISMO ORDEN que
+    // sus ids (elemento 0 = bombero id 0, etc.) -- confirma el
+    // orden real con el resto del equipo, es una suposicion por ahora
+    public BarraDeEnergia[] barrasDeEnergia;
+
     public TextMeshProUGUI textoRescatados;
     public TextMeshProUGUI textoInfectada;
     public TextMeshProUGUI textoDanio;
@@ -52,6 +57,7 @@ public class GameManager : MonoBehaviour
         LimpiarTablero();
         DibujarTablero(estado);
         ActualizarHUD(estado);
+        ActualizarBarrasDeEnergia(estado);
 
         if (estado.estado == "en_curso")
         {
@@ -253,5 +259,14 @@ public class GameManager : MonoBehaviour
             }
         }
         textoFormasPrimitivas.text = contadorFuego.ToString();
+    }
+
+    void ActualizarBarrasDeEnergia(EstadoData estado)
+    {
+        for (int i = 0; i < estado.bomberos.Length; i++)
+        {
+            BomberoData bombero = estado.bomberos[i];
+            barrasDeEnergia[bombero.id].MostrarCantidad(bombero.ap);
+        }
     }
 }
