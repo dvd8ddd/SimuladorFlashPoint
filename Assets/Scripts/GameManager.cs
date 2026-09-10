@@ -11,16 +11,13 @@ public class GameManager : MonoBehaviour
     public GameObject prefabPuertaAbierta;
     public GameObject prefabFuego;
     public GameObject prefabHumo;
-    public GameObject prefabPoiTapado;   // se usa igual para valor 1 y valor 2
-    public GameObject prefabVictima;     // solo para valor 3, ya revelada
+    public GameObject prefabPoiTapado;
+    public GameObject prefabVictima;
+    public GameObject[] prefabsBomberos; // tamano 6
 
-    public GameObject[] prefabsBomberos; // tamano 6, uno por id (0 a 5)
+    // CANVAS
 
-    // arrastra aqui los 6 objetos Spartan_X, EN EL MISMO ORDEN que
-    // sus ids (elemento 0 = bombero id 0, etc.) -- confirma el
-    // orden real con el resto del equipo, es una suposicion por ahora
-    public BarraDeEnergia[] barrasDeEnergia;
-
+    public BarraDeEnergia[] barrasDeEnergia; // barras de energia de los bomberos (los rayos que estan en el Canvas)
     public TextMeshProUGUI textoRescatados;
     public TextMeshProUGUI textoInfectada;
     public TextMeshProUGUI textoDanio;
@@ -28,8 +25,7 @@ public class GameManager : MonoBehaviour
 
     public float tamanoCelda = 1f;
 
-    // cada cuantos segundos se pide el siguiente paso al servidor,
-    // ajustalo en el Inspector para que se vea a un ritmo comodo
+    // timer entre pasos para visualizar
     public float segundosEntrePasos = 1.5f;
 
     // guarda todo lo que se instancia en un paso, para poder borrarlo
@@ -143,12 +139,9 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // poi: 1 y 2 se ven IGUAL (marcador boca abajo, mismo prefab),
-        // porque el jugador no debe poder distinguirlos con solo ver
-        // el tablero. 3 es victima ya revelada, si es visualmente distinta.
-        // OJO: una falsa alarma revelada nunca queda visible en el tablero,
-        // poi.py la descarta directo (vuelve a valor 0), por eso no existe
-        // un prefab de "falsa alarma revelada" aqui.
+        // POIs, 1 y 2 son para interrogacion ya que si un bombero
+        // descubre una falsa alarma, no se descubre en el visualizador, solo se destruye.
+        // 3 es de victima.
         for (int fila = 0; fila < 6; fila++)
         {
             for (int col = 0; col < 8; col++)
@@ -181,14 +174,14 @@ public class GameManager : MonoBehaviour
 
     void DibujarUnLado(int valor, int fila, int col, int direccion)
     {
-        // 0 nada, 3 destruida, 6 puerta destruida -> no se dibuja nada
+        // 0 nada, 3 destruida, 6 puerta destruida - no se dibuja nada
         if (valor == 0 || valor == 3 || valor == 6)
         {
             return;
         }
 
         // mismo offset base que las paredes, pero si valor es puerta
-        // (4 o 5) usa el offset propio de puerta -> mismo patron
+        // (4 o 5) usa el offset propio de puerta (mismo patron)
         // binario de rotacion que ya funcionaba para las paredes
         float offset = offsetPared;
         if (valor == 4 || valor == 5)
@@ -248,8 +241,7 @@ public class GameManager : MonoBehaviour
         textoInfectada.text = estado.perdidas + " / 4";
         textoDanio.text = estado.danio + " / 24";
 
-        // "Formas Primitivas Activas" no viene como numero directo en el
-        // JSON, hay que contar cuantas casillas del arreglo fuego valen 2
+        
         int contadorFuego = 0;
         for (int i = 0; i < estado.fuego.Length; i++)
         {
