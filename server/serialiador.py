@@ -39,6 +39,7 @@ def estado_json(model):
             "fila": int(fila),
             "col": int(col),
             "cargando": agent.cargando,
+            "ap": int(agent.ap),
         })
         identificador += 1
 
