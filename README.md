@@ -5,7 +5,6 @@ Simulación multiagente de Flash Point: Fire Rescue, ambientada en el universo d
 ## Estructura del repo
 
 ```
-SimulacionBasica/     estrategia aleatoria (agentes sin razonamiento) / Rama sergio-estrategia-avanzada
 SimulacionAvanzada/   estrategia mejorada (Dijkstra, roles fijos de rescate/contención)
 server/               servidor HTTP que conecta el modelo con Unity
 analisis/             corridas comparativas y gráficas (aleatoria vs. mejorada)
@@ -28,6 +27,7 @@ python server.py 8585
 
 **Simulaciones comparativas:**
 ```bash
+pip install pandas matplotlib seaborn
 cd analisis
 python correr_simulaciones.py
 python resultados.py
@@ -35,10 +35,10 @@ python resultados.py
 
 ## Documentación
 
-- `narrativa.md` — historia y ambientación
-- `documentacion_unity.md` — decisiones de diseño del lado de Unity
 - `Diagramas de Estado/` — los 3 diagramas de estado del proyecto
 
 ## Equipo
 
-David — tablero y estrategia aleatoria · Sergio — estrategia mejorada, servidor y análisis · Facundo — Unity, narrativa y diagramas
+David — tablero y estrategia aleatoria · 
+Sergio — estrategia mejorada, servidor y análisis · 
+Facundo — Unity, narrativa y diagramas
