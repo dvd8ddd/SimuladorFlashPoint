@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI textoInfectada;
     public TextMeshProUGUI textoDanio;
     public TextMeshProUGUI textoFormasPrimitivas;
+    public TextMeshProUGUI textoGanaste;
+    public TextMeshProUGUI textoPerdiste;
 
     public float tamanoCelda = 1f;
 
@@ -35,9 +37,11 @@ public class GameManager : MonoBehaviour
     private WebClient cliente;
     private bool partidaTerminada = false;
 
+    public PanelManager panelManager;
+    private int rescatadosAnterior = 0;
+    private int perdidasAnterior = 0;
+
     // que tan lejos del centro de la celda se coloca cada tipo,
-    // ajustalos en el Inspector si la puerta y la pared tienen
-    // distinta profundidad/grosor
     public float offsetPared = 0.5f;
     public float offsetPuerta = 0.5f;
 
@@ -47,25 +51,45 @@ public class GameManager : MonoBehaviour
         StartCoroutine(cliente.PedirNuevaPartida(ProcesarEstadoNuevo));
     }
 
-    void ProcesarEstadoNuevo(string textoJson)
+void ProcesarEstadoNuevo(string textoJson)
+{
+    EstadoData estado = JsonUtility.FromJson<EstadoData>(textoJson);
+    LimpiarTablero();
+    DibujarTablero(estado);
+    ActualizarHUD(estado);
+    ActualizarBarrasDeEnergia(estado);
+
+    // revisa si cambiaron los contadores desde el estado anterior
+    if (estado.rescatados > rescatadosAnterior)
     {
-        EstadoData estado = JsonUtility.FromJson<EstadoData>(textoJson);
-        LimpiarTablero();
-        DibujarTablero(estado);
-        ActualizarHUD(estado);
-        ActualizarBarrasDeEnergia(estado);
-
-        if (estado.estado == "en_curso")
-        {
-            Invoke("PedirSiguientePaso", segundosEntrePasos);
-        }
-        else
-        {
-            partidaTerminada = true;
-            Debug.Log("Partida terminada: " + estado.estado);
-        }
+        panelManager.MostrarVictimaRescatada();
     }
+    if (estado.perdidas > perdidasAnterior)
+    {
+        panelManager.MostrarVictimaAbatida();
+    }
+    rescatadosAnterior = estado.rescatados;
+    perdidasAnterior = estado.perdidas;
 
+    if (estado.estado == "en_curso")
+    {
+        Invoke("PedirSiguientePaso", segundosEntrePasos);
+    }
+    else
+    {
+        partidaTerminada = true;
+        Debug.Log("Partida terminada: " + estado.estado);
+        
+        if (estado.estado == "ganado")
+            {
+                textoGanaste.gameObject.SetActive(true);
+            }
+            else if (estado.estado == "perdido")
+            {
+                textoPerdiste.gameObject.SetActive(true);
+            }
+    }
+}
     void PedirSiguientePaso()
     {
         if (partidaTerminada)
@@ -101,7 +125,7 @@ public class GameManager : MonoBehaviour
             {
                 int baseIndice = (fila * 8 + col) * 4;
 
-                // solo dibujamos arriba (0) e izquierda (1) de cada celda,
+                // se dibuja arriba (0) e izquierda (1) de cada celda,
                 // para no duplicar paredes que comparten dos celdas
                 DibujarUnLado(estado.paredes[baseIndice + 0], fila, col, 0);
                 DibujarUnLado(estado.paredes[baseIndice + 1], fila, col, 1);
