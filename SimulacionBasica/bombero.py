@@ -58,11 +58,11 @@ class Bombero(Agent):
     def acciones_posibles(self): 
         acciones=[]
         col,fila=self.pos
-        cambioFila=[-1,0,1,0] #busca una casilla segura 
+        cambioFila=[-1,0,1,0] 
         cambioCol=[0,-1,0,1]
         
         if self.ap>=1 and self.model.fuego[fila][col] !=0:
-            acciones.append(("apagar", fila,col)) #opcion de apagar casilla
+            acciones.append(("apagar", fila,col)) 
         for direccion in range(4):
             filaVecina=fila+cambioFila[direccion]
             colVecina=col+cambioCol[direccion]
@@ -201,7 +201,7 @@ class Bombero(Agent):
     
     def cargar_victima(self):
         col,fila=self.pos 
-        if not self.cargando and self.model.poi[fila][col]==3: #si no lleva otra victima y hay una cerca, la carga y eso hace que no se represente dos veces
+        if not self.cargando and self.model.poi[fila][col]==3: 
             self.cargando=True
             self.model.poi[fila][col]=0
             return True
@@ -209,7 +209,7 @@ class Bombero(Agent):
     
     def dejar_victima(self):
         col,fila=self.pos
-        if self.cargando and (fila,col) in self.model.salidas: #si el bombero esta en una salida llevando una victima, suma un rescate y la deja, sino devuelve false
+        if self.cargando and (fila,col) in self.model.salidas: #suma un rescate y la deja
             self.model.rescatados +=1
             self.cargando=False
             return True
