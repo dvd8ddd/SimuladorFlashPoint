@@ -8,14 +8,14 @@ class Bombero(Agent):
     def __init__(self, model):
         super().__init__(model)
         self.ap=4 #accion point
-        self.guardados=0 #guarda los puntos 
+        self.guardados=0 
         self.cargando=False
         
     def step(self): 
         self.ap=4+self.guardados #suma puntos mas los puntos guardados
         self.guardados=0
         
-        while self.ap>0: #actua  puntos
+        while self.ap>0: 
             col,fila=self.pos
             
             if self.model.fuego[fila][col]==2 and self.ap==1: #comprueba si el fuego esta en un solo punto
@@ -83,14 +83,14 @@ class Bombero(Agent):
                     if self.ap>=1 and fuegoVecino!=0: #agrega apagado si la casilla siguiente tiene humo o fuego
                         acciones.append(("apagar", filaVecina, colVecina))
                         
-                if self.ap>=1 and (borde==4 or borde==5): #accion puerta
+                if self.ap>=1 and (borde==4 or borde==5): 
                     acciones.append(("puerta",direccion,0)) 
-                if self.ap>=2 and (borde==1 or borde==2): #accion pared
+                if self.ap>=2 and (borde==1 or borde==2): 
                     acciones.append(("pared", direccion,0))
-        if not self.cargando and self.model.poi[fila][col]==3: #si no hay victima y hay una señalada, agrega cargar a las acciones posibles
+        if not self.cargando and self.model.poi[fila][col]==3: #agrega cargar a las acciones posibles
             acciones.append(("cargar",0,0))
         if self.cargando and (fila,col)in self.model.salidas:
-            acciones.append(("dejar",0,0)) #si lleva una victima y esta en salida, agrega la opcion de dejar
+            acciones.append(("dejar",0,0)) #agrega la opcion de dejar
         return acciones
     
     def mover(self,fila,col):
@@ -103,7 +103,7 @@ class Bombero(Agent):
         for i in range(4): #revisa las direcciones
             if fila==filaActual+cambioFila[i] and col==colActual+cambioCol[i]:
                 direccion=i 
-        if direccion==-1: #no encontro un vecino valido y devuelve false
+        if direccion==-1: 
             return False
         if not puede_pasar(self.model, filaActual,colActual,direccion): #comprueba paso y puntos, no hay movimeinto si hay obstaculo
             return False
