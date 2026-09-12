@@ -4,18 +4,18 @@ from paredes import puede_pasar
 
 #hay muchos cambioFila, cambioCol y opuesto porque necesita revisar las cuatro direcciones, y cada uno define sus listas para que se haga
 #igual hay muchos filaVecina, colVecina y borde es porque calculan en donde esta la casilla cercana o vecina, en si calcula fila  y columna vecinal
-class Bombero(Agent): #se crea bombero
+class Bombero(Agent): 
     def __init__(self, model):
         super().__init__(model)
-        self.ap=4 #accion point
-        self.guardados=0 #guarda los puntos que sobrarn en el turno anterior
+        self.ap=4 
+        self.guardados=0 
         self.cargando=False
         
-    def step(self): #comienza el turno 
+    def step(self): 
         self.ap=4+self.guardados #suma puntos mas los puntos guardados
         self.guardados=0
         
-        while self.ap>0: #actua con puntos
+        while self.ap>0: 
             col,fila=self.pos
             
             if self.model.fuego[fila][col]==2 and self.ap==1: #comprueba si el fuego esta en un solo punto
@@ -25,14 +25,14 @@ class Bombero(Agent): #se crea bombero
                 for direccion in range(4):
                     filaVecina=fila+cambioFila[direccion]
                     colVecina=col+cambioCol[direccion]
-                    if 0 <=filaVecina <6 and 0<=colVecina<8: #casilla vecina dentro del tablero
+                    if 0 <=filaVecina <6 and 0<=colVecina<8: 
                         if self.model.fuego[filaVecina][colVecina]!=2: #que no tenga fuego
                             if self.mover(filaVecina, colVecina): #mover el bombeero y checar si se realizo el movimeinto
                                 salio=True
                                 break
-                if not salio: #apaga si no pudo salir
+                if not salio: 
                     self.apagar(fila,col)
-            else: #obtiene las acciones disponibles
+            else: 
                 acciones=self.acciones_posibles()
                 if len(acciones)==0:
                     break
@@ -52,22 +52,22 @@ class Bombero(Agent): #se crea bombero
                     elif accion=="dejar":
                         self.dejar_victima()
                     break
-        self.guardados=self.ap #guardar puntos sobrantes
+        self.guardados=self.ap 
         if self.guardados>4:
             self.guardados=4
-    def acciones_posibles(self): #crea lista vacia que se llenara con acciones desde su posicion
+    def acciones_posibles(self): 
         acciones=[]
         col,fila=self.pos
-        cambioFila=[-1,0,1,0] #busca una casilla segura vecina
+        cambioFila=[-1,0,1,0] 
         cambioCol=[0,-1,0,1]
         
         if self.ap>=1 and self.model.fuego[fila][col] !=0:
-            acciones.append(("apagar", fila,col)) #opcion de apagar casilla
+            acciones.append(("apagar", fila,col)) 
         for direccion in range(4):
             filaVecina=fila+cambioFila[direccion]
             colVecina=col+cambioCol[direccion]
             if 0<=filaVecina<6 and 0 <=colVecina<8:
-                borde=self.model.paredes[fila][col][direccion] #revisar las casillas cercanas
+                borde=self.model.paredes[fila][col][direccion] 
                 if puede_pasar(self.model, fila, col,direccion):
                     costo=1 #calcula el costo del moevimeinto
                     if self.cargando:
@@ -83,14 +83,14 @@ class Bombero(Agent): #se crea bombero
                     if self.ap>=1 and fuegoVecino!=0: #agrega apagado si la casilla siguiente tiene humo o fuego
                         acciones.append(("apagar", filaVecina, colVecina))
                         
-                if self.ap>=1 and (borde==4 or borde==5): #accion puerta
+                if self.ap>=1 and (borde==4 or borde==5): 
                     acciones.append(("puerta",direccion,0)) 
-                if self.ap>=2 and (borde==1 or borde==2): #accion pared
+                if self.ap>=2 and (borde==1 or borde==2): 
                     acciones.append(("pared", direccion,0))
-        if not self.cargando and self.model.poi[fila][col]==3: #si no hay victima y hay una señalada, agrega cargar a las acciones posibles
+        if not self.cargando and self.model.poi[fila][col]==3: #agrega cargar a las acciones posibles
             acciones.append(("cargar",0,0))
         if self.cargando and (fila,col)in self.model.salidas:
-            acciones.append(("dejar",0,0)) #si lleva una victima y esta en salida, agrega la opcion de dejar
+            acciones.append(("dejar",0,0)) #agrega la opcion de dejar
         return acciones
     
     def mover(self,fila,col):
@@ -103,16 +103,16 @@ class Bombero(Agent): #se crea bombero
         for i in range(4): #revisa las direcciones
             if fila==filaActual+cambioFila[i] and col==colActual+cambioCol[i]:
                 direccion=i 
-        if direccion==-1: #no encontro un vecino valido y devuelve false
+        if direccion==-1: 
             return False
         if not puede_pasar(self.model, filaActual,colActual,direccion): #comprueba paso y puntos, no hay movimeinto si hay obstaculo
             return False
         costo=1
         if self.cargando: 
-            costo=2 #valor 2 para mover
+            costo=2 
         if self.model.fuego[fila][col]==2:
-            costo=2#si detino tiene fuego vale 2 pero no puede entrar con una victima
-            if self.cargando: #si no hay puntos da false y no mueve
+            costo=2
+            if self.cargando:
                 return False
         if self.ap<costo:
             return False
@@ -127,7 +127,7 @@ class Bombero(Agent): #se crea bombero
             return False
         if self.ap<1: 
             return False
-        permitido=fila==filaActual and col==colActual #donde puede apagar, para eso tiene que ser un borde transitable sino devuelve false
+        permitido=fila==filaActual and col==colActual #donde puede apagar
         cambioFila=[-1,0,1,0]
         cambioCol=[0,-1,0,1]
         for direccion in range(4):
@@ -201,7 +201,7 @@ class Bombero(Agent): #se crea bombero
     
     def cargar_victima(self):
         col,fila=self.pos 
-        if not self.cargando and self.model.poi[fila][col]==3: #si no lleva otra victima y hay una cerca, la carga y eso hace que no se represente dos veces
+        if not self.cargando and self.model.poi[fila][col]==3: 
             self.cargando=True
             self.model.poi[fila][col]=0
             return True
@@ -209,7 +209,7 @@ class Bombero(Agent): #se crea bombero
     
     def dejar_victima(self):
         col,fila=self.pos
-        if self.cargando and (fila,col) in self.model.salidas: #si el bombero esta en una salida llevando una victima, suma un rescate y la deja, sino devuelve false
+        if self.cargando and (fila,col) in self.model.salidas: #suma un rescate y la deja
             self.model.rescatados +=1
             self.cargando=False
             return True
