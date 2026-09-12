@@ -4,18 +4,18 @@ from paredes import puede_pasar
 
 #hay muchos cambioFila, cambioCol y opuesto porque necesita revisar las cuatro direcciones, y cada uno define sus listas para que se haga
 #igual hay muchos filaVecina, colVecina y borde es porque calculan en donde esta la casilla cercana o vecina, en si calcula fila  y columna vecinal
-class Bombero(Agent): #se crea bombero
+class Bombero(Agent): 
     def __init__(self, model):
         super().__init__(model)
         self.ap=4 #accion point
-        self.guardados=0 #guarda los puntos que sobrarn en el turno anterior
+        self.guardados=0 #guarda los puntos 
         self.cargando=False
         
-    def step(self): #comienza el turno 
+    def step(self): 
         self.ap=4+self.guardados #suma puntos mas los puntos guardados
         self.guardados=0
         
-        while self.ap>0: #actua con puntos
+        while self.ap>0: #actua  puntos
             col,fila=self.pos
             
             if self.model.fuego[fila][col]==2 and self.ap==1: #comprueba si el fuego esta en un solo punto
@@ -25,14 +25,14 @@ class Bombero(Agent): #se crea bombero
                 for direccion in range(4):
                     filaVecina=fila+cambioFila[direccion]
                     colVecina=col+cambioCol[direccion]
-                    if 0 <=filaVecina <6 and 0<=colVecina<8: #casilla vecina dentro del tablero
+                    if 0 <=filaVecina <6 and 0<=colVecina<8: 
                         if self.model.fuego[filaVecina][colVecina]!=2: #que no tenga fuego
                             if self.mover(filaVecina, colVecina): #mover el bombeero y checar si se realizo el movimeinto
                                 salio=True
                                 break
-                if not salio: #apaga si no pudo salir
+                if not salio: 
                     self.apagar(fila,col)
-            else: #obtiene las acciones disponibles
+            else: 
                 acciones=self.acciones_posibles()
                 if len(acciones)==0:
                     break
@@ -52,13 +52,13 @@ class Bombero(Agent): #se crea bombero
                     elif accion=="dejar":
                         self.dejar_victima()
                     break
-        self.guardados=self.ap #guardar puntos sobrantes
+        self.guardados=self.ap 
         if self.guardados>4:
             self.guardados=4
-    def acciones_posibles(self): #crea lista vacia que se llenara con acciones desde su posicion
+    def acciones_posibles(self): 
         acciones=[]
         col,fila=self.pos
-        cambioFila=[-1,0,1,0] #busca una casilla segura vecina
+        cambioFila=[-1,0,1,0] #busca una casilla segura 
         cambioCol=[0,-1,0,1]
         
         if self.ap>=1 and self.model.fuego[fila][col] !=0:
@@ -67,7 +67,7 @@ class Bombero(Agent): #se crea bombero
             filaVecina=fila+cambioFila[direccion]
             colVecina=col+cambioCol[direccion]
             if 0<=filaVecina<6 and 0 <=colVecina<8:
-                borde=self.model.paredes[fila][col][direccion] #revisar las casillas cercanas
+                borde=self.model.paredes[fila][col][direccion] 
                 if puede_pasar(self.model, fila, col,direccion):
                     costo=1 #calcula el costo del moevimeinto
                     if self.cargando:
@@ -109,10 +109,10 @@ class Bombero(Agent): #se crea bombero
             return False
         costo=1
         if self.cargando: 
-            costo=2 #valor 2 para mover
+            costo=2 
         if self.model.fuego[fila][col]==2:
-            costo=2#si detino tiene fuego vale 2 pero no puede entrar con una victima
-            if self.cargando: #si no hay puntos da false y no mueve
+            costo=2
+            if self.cargando:
                 return False
         if self.ap<costo:
             return False
@@ -127,7 +127,7 @@ class Bombero(Agent): #se crea bombero
             return False
         if self.ap<1: 
             return False
-        permitido=fila==filaActual and col==colActual #donde puede apagar, para eso tiene que ser un borde transitable sino devuelve false
+        permitido=fila==filaActual and col==colActual #donde puede apagar
         cambioFila=[-1,0,1,0]
         cambioCol=[0,-1,0,1]
         for direccion in range(4):
