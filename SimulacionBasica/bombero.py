@@ -7,7 +7,7 @@ from paredes import puede_pasar
 class Bombero(Agent): 
     def __init__(self, model):
         super().__init__(model)
-        self.ap=4 #accion point
+        self.ap=4 
         self.guardados=0 
         self.cargando=False
         
