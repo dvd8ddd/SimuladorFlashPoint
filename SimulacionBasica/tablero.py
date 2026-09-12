@@ -12,7 +12,7 @@ def leer_tab(ruta):
     salidas=[]
     indice=0
 
-    #6x8, los 8 tienen 4 digitos
+    #los 8 tienen 4 digitos
     for fila in range(6):
         linea=lineas[indice].split()
         for col in range(8):
