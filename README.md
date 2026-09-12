@@ -5,8 +5,8 @@ Simulación multiagente de Flash Point: Fire Rescue, ambientada en el universo d
 ## Estructura del repo
 
 ```
-SimulacionAvanzada/   estrategia aleatoria y estrategia mejorada (Dijkstra, roles fijos) -- las dos viven aqui, es lo que compara analisis/
-SimulacionBasica/     version inicial, no integrada -- la comparacion final usa SimulacionAvanzada/
+SimulacionAvanzada/   estrategia aleatoria y estrategia mejorada (Dijkstra, roles fijos) | las dos viven aqui, es lo que compara analisis/
+SimulacionBasica/     version inicial, no integrada | la comparacion final usa SimulacionAvanzada/
 server/               servidor HTTP que conecta el modelo con Unity
 analisis/             corridas comparativas y gráficas (aleatoria vs. mejorada)
 tableros/             tablero del juego y estado de ejemplo para pruebas sin servidor
@@ -24,7 +24,8 @@ cd server
 python server.py 8585
 ```
 
-**Unity:** con el servidor corriendo, abrir el proyecto (rama `ModeloSimulador`) y darle Play. Se conecta a `http://localhost:8585` — un GET reinicia la partida, cada POST avanza un turno.
+**Unity:** con el servidor corriendo, abrir el proyecto (rama `ModeloSimulador`) y darle Play. Se conecta a `http://localhost:8585`.
+Un GET reinicia la partida, cada POST avanza un turno.
 
 **Simulaciones comparativas:**
 ```bash
@@ -41,5 +42,7 @@ python resultados.py
 ## Equipo
 
 David — tablero y estrategia aleatoria · 
+
 Sergio — estrategia mejorada, servidor y análisis · 
+
 Facundo — Unity, narrativa y diagramas
