@@ -1,24 +1,3 @@
-# Cómo se hacen las paredes en el grid sin que pongamos casillas extras?
-
-# Las representamos con números
-
-# 0 = arriba
-# 1 = izquierda
-# 2 = abajo
-# 3 = derecha
-
-# Entonces dentro del model definimos que cada casilla tiene 4 lados
-# Pasa de que por ejemplo (x,y) tiene [0, 0, 0, 0] disponibles
-# Representando los lados [arriba, izq, abajo, derecha]
-# 0 = no pared
-# 1 = pared
-
-
-
-
-# La casilla existe? 
-# Definir si la coordenada es valida 
-# Cómo es 6x8 pasa a 5x7 en código
 def es_valida(fila, col):
     if fila < 0 or fila > 5:
         return False
@@ -27,9 +6,7 @@ def es_valida(fila, col):
     return True
 
 
-# Cuales casillas vecinas están en la dirección de un punto?
-# Checa las casillas vecinas y luego usa es_valida para calcular
-# si esas casillas representan el tablero.
+
 def celda_vecina(fila, col, direccion):
     if direccion == 0: # Arriba = resta 1 a la fila
         fila_v = fila - 1
@@ -47,14 +24,6 @@ def celda_vecina(fila, col, direccion):
         return None
     return (fila_v, col_v)
 
-# Pregunta si puede pasar a esa posicion
-
-# Tiene que ver con los estados que definimos de una pared/puerta
-
-# Nada = 0 | Pasa
-# Pared = 1 y 2 (normal y dañada) | No pasa   | 3 (destruida) | Pasa
-# Puerta = 4 | No pasa  | 5 (abierta) y 6 (destruida) | Pasa
-
 
 def puede_pasar(model, fila, col, direccion):
     vecina = celda_vecina(fila, col, direccion)
@@ -67,10 +36,7 @@ def puede_pasar(model, fila, col, direccion):
 
 
 
-# Se vuelve a llamar a puede_pasar
-# Para que regrese las direcciones alrededor del agente que puede utilizar
-# para moverse
-
+# Se vuelve a llamar a puede_pasar para que regrese las direcciones  del agente que puede usar para moverse
 
 def vecinos_accesibles(model, fila, col):
     result = []
@@ -83,10 +49,3 @@ def vecinos_accesibles(model, fila, col):
     if puede_pasar(model, fila, col, 3):
         result.append(celda_vecina(fila, col, 3))
     return result
-
-
-# El oredn final es
-
-# vecinos_accesibles > puede_pasar > celda_vecina > es_valid
-
-# La una usa la otra que usa la siguiente
