@@ -5,11 +5,12 @@ Simulación multiagente de Flash Point: Fire Rescue, ambientada en el universo d
 ## Estructura del repo
 
 ```
-SimulacionAvanzada/   estrategia mejorada (Dijkstra, roles fijos de rescate/contención)
+SimulacionAvanzada/   estrategia aleatoria y estrategia mejorada (Dijkstra, roles fijos) -- las dos viven aqui, es lo que compara analisis/
+SimulacionBasica/     version inicial, no integrada -- la comparacion final usa SimulacionAvanzada/
 server/               servidor HTTP que conecta el modelo con Unity
 analisis/             corridas comparativas y gráficas (aleatoria vs. mejorada)
-tableros/              tablero del juego y estado de ejemplo para pruebas sin servidor
-Diagramas de Estado/   diagramas de la partida, el bombero y el tablero
+tableros/             tablero del juego y estado de ejemplo para pruebas sin servidor
+Diagramas de Estado/  diagramas de la partida, el bombero y el tablero
 ```
 
 El proyecto de Unity vive en la rama `ModeloSimulador`.
